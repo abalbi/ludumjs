@@ -1,17 +1,14 @@
 describe('Elemento', function(){
   describe('Editor', function(){
     beforeEach(function() {
-      browser().navigateTo('../../elemento');
+      browser().navigateTo('../../elemento/editor');
     });
-    it('Debe cargarse el nombre y el id del elemento nuevo vacios',function(){
-      expect(input('elemento.nombre').val()).toEqual('');
-      expect(input('elemento.id').val()).toEqual('');
+    it('debe mostrar un mensaje si el objeto es autoid y _id no tiene valor',function(){
+      expect(element('.idrequerido:visible').count()).toBe(1);
     });
-
-    it('Debe convertir el nombre a un string valido cuando este es modificado', function(){
-      input('elemento.nombre').enter("Leia Organa");
-      expect(input('elemento.id').val()).toEqual('leiaorgana');
+    it('debe no mostrar un mensaje si el objeto es autoid y _id tiene valor',function(){
+      input('elemento._id').enter("algun_id");
+      expect(element('.idrequerido:visible').count()).toBe(0);
     });
-
   });	
 });

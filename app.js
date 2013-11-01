@@ -1,49 +1,41 @@
+
+/**
+ * Module dependencies.
+ */
+
 var express = require('express');
+var routes = require('./routes');
+var user = require('./routes/user');
+var elemento = require('./routes/elemento');
+var http = require('http');
+var path = require('path');
+
 var app = express();
 
-app.use(express.static('public'));
-var mongo = require('mongodb');
-var monk = require('monk');
-var db = monk('localhost:27017/ludumjs');
+// all environments
+app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
+app.use(express.favicon());
+app.use(express.logger('dev'));
+app.use(express.bodyParser());
+app.use(express.methodOverride());
+app.use(express.cookieParser('your secret here'));
+app.use(express.session());
+app.use(app.router);
+app.use(express.static(path.join(__dirname, 'public')));
 
-app.configure(function(){
-  app.use(express.bodyParser());
-  app.use(app.router);
-});
-
-app.get('/', function(req, res) {
-   res.sendfile('index.html');
-});
-
-app.get('/elemento/guardar/:id', function(req, res){
-	guardar(req, res);
-});
-
-app.post('/elemento/guardar/:id', function(req, res){
-	guardar(req, res);
-});
-
-function guardar (req, res) {
-	id = req.params.id;
-	elemento = req.body;
-	elementos = db.get('elementos');
-	elementos.insert(elemento, function(err, doc){
-      doc.caca = "caca";
-      console.log(JSON.stringify(doc));
-      res.end(JSON.stringify(doc));
-	});
+// development only
+if ('development' == app.get('env')) {
+  app.use(express.errorHandler());
 }
 
-app.get('/elemento.json', function(req, res) {
-   res.sendfile('public/item.json');
+app.get('/', routes.index);
+app.get('/users', user.list);
+
+http.createServer(app).listen(app.get('port'), function(){
+  console.log('Express server listening on port ' + app.get('port'));
 });
 
-
-app.get('/elemento', function(req, res) {
-   res.sendfile('elemento/editor.html');
-});
-
-
-
-console.log('Escuchando el puerto 3000');
-app.listen(3000);
+app.get('/helloworld', routes.helloworld);
+app.get('/elemento/editor', elemento.editor);
