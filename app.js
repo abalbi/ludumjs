@@ -39,3 +39,4 @@ http.createServer(app).listen(app.get('port'), function(){
 
 app.get('/helloworld', routes.helloworld);
 app.get('/elemento/editor', elemento.editor);
+app.get('/elemento/guardar', elemento.guardar);

@@ -5,6 +5,27 @@ block content
   p Welcome to #{title}
   div(ng-app="ludumApp")
     div(ng-controller="ElementoCtrlEditor")
-      div(ng-show="elemento.autoid && !elemento._id" class="idrequerido") El _id es requerido
-      input(ng-model="elemento._id")
-      {{elemento.elemento}}
+      div(ng-show="!elemento.tipo" class="msgtiporequerido") Seleccionar un tipo
+      div(ng-show="!elemento.autoid && !elemento._id" class="idrequerido") _id es requerido
+      select(ng-model="elemento.tipo" ng-change="definirTipo()")
+        option(value="elemento") elemento
+        option(value="evento") evento
+      div(ng-show="elemento.tipo && !elemento.autoid")
+        | id: 
+        input(ng-model="elemento._id")
+      div(ng-show="elemento.tipo == 'elemento'")
+        | nombre: 
+        input(ng-model="elemento.nombre" ng-change="cambio()")
+      div Etiquetas
+        ul(class="etiquetas")
+          li(ng-repeat="etiqueta in elemento.etiquetas") {{etiqueta.nombre}}
+            span(ng-show="etiqueta.origen != 'auto'" ng-click="eliminar_etiqueta(etiqueta.nombre)")   X
+        div
+          input(ng-model="agregada_etiqueta" id="agregada_etiqueta")
+          button(ng-click="agregar_etiqueta()" id="agregar_etiqueta") agregar
+          div(ng-show="agregada_etiqueta.length")
+            ul
+              li(ng-click="seleccionar_etiqueta(etiqueta.nombre)" ng-repeat="etiqueta in etiquetas | filter:agregada_etiqueta | filtrarEtiquetasPosibles:this") {{etiqueta.nombre}}   
+      div  
+        button(ng-click="guardar()" id="guardar") guardar
+      div {{elemento | json}}    
